@@ -1,0 +1,11 @@
+◆簡易RSSリーダーを作ってみた 〜 Java編 〜
+　※javax使用
+	https://qiita.com/tanuki_mujina/items/0910974f2d068ae0fd40
+◆【Java】RomeでRSSリーダーAPIを簡単に実装する
+　※Rome使用
+	https://qiita.com/a__i__r/items/cd21029168dde0dc22e0
+◆Romeライブラリー
+	https://rometools.jira.com/jira/dashboards/last-visited
+	https://rometools.github.io/rome-fetcher/
+◆jdom
+	http://www.jdom.org/downloads/index.html 
