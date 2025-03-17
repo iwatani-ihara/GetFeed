@@ -15,32 +15,36 @@ import org.w3c.dom.NodeList;
 
 public class GetRSS {
 
-    public static List<RSSItem> fetchRSSItems(String rssUrl) {
-        List<RSSItem> itemsList = new ArrayList<>();
-        try {
-            InputStream stream = new URL(rssUrl).openStream();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(stream);
-            doc.getDocumentElement().normalize();
+	public static List<RSSItem> fetchRSSItems(String rssUrl) {
+	    List<RSSItem> itemsList = new ArrayList<>();
+	    try {
+	        InputStream stream = new URL(rssUrl).openStream();
+	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder builder = factory.newDocumentBuilder();
+	        Document doc = builder.parse(stream);
+	        doc.getDocumentElement().normalize();
 
-            NodeList items = doc.getElementsByTagName("item");
-            for (int i = 0; i < items.getLength(); i++) {
-                Node item = items.item(i);
-                if (item.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) item;
+	        NodeList items = doc.getElementsByTagName("item");
+	        for (int i = 0; i < items.getLength(); i++) {
+	            Node item = items.item(i);
+	            if (item.getNodeType() == Node.ELEMENT_NODE) {
+	                Element element = (Element) item;
 
-                    // タイトルと内容を取得
-                    String title = element.getElementsByTagName("title").item(0).getTextContent();
-                    String description = element.getElementsByTagName("description").item(0).getTextContent();
+	                // タイトルを取得
+	                String title = element.getElementsByTagName("title").item(0).getTextContent();
 
-                    // RSSItemオブジェクトを作成してリストに追加
-                    itemsList.add(new RSSItem(title, description));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return itemsList;
-    }
+	                // 説明が存在しない場合は空文字列を設定
+	                Node descriptionNode = element.getElementsByTagName("description").item(0);
+	                String description = (descriptionNode != null) ? descriptionNode.getTextContent() : "";
+
+	                // RSSItemオブジェクトを作成してリストに追加
+	                itemsList.add(new RSSItem(title, description));
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return itemsList;
+	}
+
 }
