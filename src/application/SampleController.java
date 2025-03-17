@@ -4,9 +4,13 @@ import java.util.List;
 
 import application.logic.GetRSS;
 import application.logic.RSSItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class SampleController {
 	
@@ -19,11 +23,22 @@ public class SampleController {
     private Label titleLabel;
 
     @FXML
-    private ListView<RSSItem> feedListView;
+    private TableView<RSSItem> rssTableView;
+    
+    @FXML
+    private TableColumn<RSSItem, String> timeColumn;
 
+    @FXML
+    private TableColumn<RSSItem, String> contentColumn;
 
     @FXML
     private void initialize() {
+        // TableViewの列をRSSItemクラスのプロパティにバインド
+        timeColumn.setCellValueFactory(new PropertyValueFactory<>("pubDate"));
+        contentColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        // 初期ラベルを固定値に設定
+        titleLabel.setText("feed");
     }
     
     // 日経情報を読み込む
@@ -38,19 +53,17 @@ public class SampleController {
         loadRSSFeed(YAHOO_RSS_URL);
     }
     
-    // RSS取得処理の呼出
+ // RSS取得処理の呼出
     private void loadRSSFeed(String rssUrl) {
         // RSSデータを取得
         List<RSSItem> rssItems = GetRSS.fetchRSSItems(rssUrl);
 
-        // ListViewをクリアして新しいデータを追加
-        feedListView.getItems().clear();
-        feedListView.getItems().addAll(rssItems);
+        // ObservableListに変換してTableViewに設定
+        ObservableList<RSSItem> observableList = FXCollections.observableArrayList(rssItems);
+        rssTableView.setItems(observableList);
 
-        // 選択リスナー（タイトルラベルを固定）
-        feedListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            titleLabel.setText("feed"); // ラベルを固定
-        });
+        // タイトルラベルは常に「feed」に固定
+        titleLabel.setText("feed");
     }
     
 

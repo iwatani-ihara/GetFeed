@@ -30,15 +30,26 @@ public class GetRSS {
 	            if (item.getNodeType() == Node.ELEMENT_NODE) {
 	                Element element = (Element) item;
 
-	                // タイトルを取得
-	                String title = element.getElementsByTagName("title").item(0).getTextContent();
+	                // タイトルを取得（内容が空の場合に利用）
+	                String title = element.getElementsByTagName("title").item(0) != null ?
+	                    element.getElementsByTagName("title").item(0).getTextContent() : "No Title";
 
-	                // 説明が存在しない場合は空文字列を設定
+	                // 公開日時を取得（dc:date または pubDate のいずれか）
+	                Node dateNode = element.getElementsByTagName("dc:date").item(0);
+	                if (dateNode == null) {
+	                    dateNode = element.getElementsByTagName("pubDate").item(0);
+	                }
+	                String pubDate = (dateNode != null) ? dateNode.getTextContent() : "No Date";
+
+	                // 説明を取得（説明が空の場合はタイトルを代わりに使用）
 	                Node descriptionNode = element.getElementsByTagName("description").item(0);
-	                String description = (descriptionNode != null) ? descriptionNode.getTextContent() : "";
+	                String description = (descriptionNode != null && !descriptionNode.getTextContent().isEmpty()) ?
+	                    descriptionNode.getTextContent() : title;
 
-	                // RSSItemオブジェクトを作成してリストに追加
-	                itemsList.add(new RSSItem(title, description));
+	                // タイトルと日時があればリストに追加
+	                if (pubDate != null && description != null) {
+	                    itemsList.add(new RSSItem(title, description, pubDate));
+	                }
 	            }
 	        }
 	    } catch (Exception e) {
@@ -46,5 +57,9 @@ public class GetRSS {
 	    }
 	    return itemsList;
 	}
+
+
+
+
 
 }
