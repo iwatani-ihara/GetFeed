@@ -9,6 +9,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
 public class SampleController {
+	
+	// RSSフィードURLを定数として定義
+    private static final String NIKKEI_RSS_URL = "https://business.nikkei.com/rss/sns/nb.rdf";
+    private static final String YAHOO_RSS_URL = "https://news.yahoo.co.jp/rss/topics/top-picks.xml";
 
     // FXMLで指定したfx:idと一致するフィールドを定義
     @FXML
@@ -22,30 +26,20 @@ public class SampleController {
     private void initialize() {
     }
     
+    // 日経情報を読み込む
     @FXML
     private void handleNikkeiUrl() {
-        // RSSフィードURL
-        String rssUrl = "https://business.nikkei.com/rss/sns/nb.rdf";
-
-        // RSSデータを取得
-        List<RSSItem> rssItems = GetRSS.fetchRSSItems(rssUrl);
-
-        // ListViewをクリアして新しいデータを追加
-        feedListView.getItems().clear();
-        feedListView.getItems().addAll(rssItems);
-
-        // 選択リスナーを追加（詳細表示）
-        feedListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-//            if (newSelection != null) {
-//                titleLabel.setText(newSelection.getDescription()); // 内容を表示
-//            }
-        });
+        loadRSSFeed(NIKKEI_RSS_URL);
     }
+
+    // Yahoo!ニュースを読み込む
     @FXML
     private void yahooTopPicksUrl() {
-        // RSSフィードURL
-        String rssUrl = "https://news.yahoo.co.jp/rss/topics/top-picks.xml";
-
+        loadRSSFeed(YAHOO_RSS_URL);
+    }
+    
+    // RSS取得処理の呼出
+    private void loadRSSFeed(String rssUrl) {
         // RSSデータを取得
         List<RSSItem> rssItems = GetRSS.fetchRSSItems(rssUrl);
 
@@ -53,12 +47,11 @@ public class SampleController {
         feedListView.getItems().clear();
         feedListView.getItems().addAll(rssItems);
 
-        // 選択リスナーを追加（詳細表示）
+        // 選択リスナー（タイトルラベルを固定）
         feedListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-//            if (newSelection != null) {
-//                titleLabel.setText(newSelection.getDescription()); // 内容を表示
-//            }
+            titleLabel.setText("feed"); // ラベルを固定
         });
     }
+    
 
 }
